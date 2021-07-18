@@ -12,6 +12,7 @@ import ingjulianvega.ximic.msscasurecommendation.web.model.RecommendationList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -40,7 +41,14 @@ public class RecommendationServiceImpl implements RecommendationService {
         log.debug("getById()...");
         return recommendationMapper.recommendationEntityToRecommendationDto(
                 recommendationRepository.findById(id)
-                        .orElseThrow(() -> new RecommendationException(ErrorCodeMessages.RECOMMENDATION_NOT_FOUND, "")));
+                        .orElseThrow(() -> RecommendationException
+                                .builder()
+                                .httpStatus(HttpStatus.BAD_REQUEST)
+                                .apiCode(ErrorCodeMessages.RECOMMENDATION_NOT_FOUND_API_CODE)
+                                .error(ErrorCodeMessages.RECOMMENDATION_NOT_FOUND_ERROR)
+                                .message(ErrorCodeMessages.RECOMMENDATION_NOT_FOUND_MESSAGE)
+                                .solution(ErrorCodeMessages.RECOMMENDATION_NOT_FOUND_SOLUTION)
+                                .build()));
     }
 
     @Override
@@ -70,7 +78,14 @@ public class RecommendationServiceImpl implements RecommendationService {
     public void updateById(UUID id, Recommendation recommendation) {
         log.debug("updateById...");
         RecommendationEntity recommendationEntity = recommendationRepository.findById(id)
-                .orElseThrow(() -> new RecommendationException(ErrorCodeMessages.RECOMMENDATION_NOT_FOUND, ""));
+                .orElseThrow(() -> RecommendationException
+                        .builder()
+                        .httpStatus(HttpStatus.BAD_REQUEST)
+                        .apiCode(ErrorCodeMessages.RECOMMENDATION_NOT_FOUND_API_CODE)
+                        .error(ErrorCodeMessages.RECOMMENDATION_NOT_FOUND_ERROR)
+                        .message(ErrorCodeMessages.RECOMMENDATION_NOT_FOUND_MESSAGE)
+                        .solution(ErrorCodeMessages.RECOMMENDATION_NOT_FOUND_SOLUTION)
+                        .build());
 
         recommendationEntity.setVisitId(recommendation.getVisitId());
         recommendationEntity.setRecommendationTypeId(recommendation.getRecommendationTypeId());
